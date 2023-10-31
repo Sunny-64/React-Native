@@ -28,7 +28,10 @@ function App(): JSX.Element {
           source={logo}
           style = {styles.logo}
           />
-          <Text style={{fontSize : 21, fontWeight : 'bold'}}>Find the Best Place To travel</Text>
+          <View>
+            <Text style={{fontSize : 21, fontWeight : 'bold'}}>Tour Guide</Text>
+            <Text>Find the best place to Travel.</Text>
+          </View>
         </View>
         <Separator />
         <FlatCards />
