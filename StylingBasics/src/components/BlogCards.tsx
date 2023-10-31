@@ -16,21 +16,21 @@ const CARD_DATA = [
         marginRight : 3, 
         img : manaliBlogJpg,
         title : 'Manali Top hilstation',
-        description : 'wait..',
+        description : 'Manali is a high-altitude Himalayan resort town in India’s northern Himachal Pradesh state. It has a reputation as a backpacking center and honeymoon destination.',
         redirectTo : 'location'
     },
     {
         marginRight : 3, 
         img : kheergangaWebp, 
         title : 'Best season to visit kasol', 
-        description : 'wait..', 
+        description : 'Kasol is a hamlet in the Kullu district of the Indian state of Himachal Pradesh. It is situated in Parvati Valley, on the banks of the Parvati River, Between Bhuntar and Manikaran, it is located 30 km from Bhuntar and 36 km from Kullu town, the district headquarters, 3.5 km from Manikaran.', 
         redirectTo : 'location'
     },
     {
         marginRight : 0, 
         img : chadarTrekJpg,
         title : 'Frozen lake in chadar trek',
-        description : 'wait..', 
+        description : 'This magnificent trek lies in the Leh region of Ladakh. The Chadar Trek, one of the popular winter treks, is also one of the longest trekking trails in the Indian Himalayan region that covers an entire stretch of 62 kilometers in 8 chilly days.', 
         redirectTo : 'location'
     }
 ]

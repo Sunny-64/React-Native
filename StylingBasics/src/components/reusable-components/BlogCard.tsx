@@ -18,7 +18,7 @@ const BlogCard = (props: any) => {
                 />
             </View>
 
-            <Text style={[styles.cardText, { fontSize: 15, marginTop: 0, fontWeight: '600', marginLeft: 16 }]}>{description}<Text style={{color : 'purple', marginLeft : 8}}>Read more...</Text></Text>
+            <Text style={[styles.cardText, { fontSize: 15, marginTop: 0, fontWeight: '400', marginLeft: 16}]}>{description.substring(0, 150) + " "}<Text style={{color : 'purple', marginLeft : 8}}>Read more...</Text></Text>
            
         </View>
     )
