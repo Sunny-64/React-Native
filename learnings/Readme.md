@@ -32,3 +32,21 @@ The useColorScheme React hook provides and subscribes to color scheme updates fr
 ```
 <Text>useColorScheme(): {colorScheme}</Text>
 ```
+
+### Creating Cards
+
+- Elevation property is used for providing 3d looks to cards and containers
+
+```
+elevation : 2
+shadowOffset : {
+    width : 1, 
+    height : 1, 
+}, 
+shadowColor : #000000, 
+shadowOpacity : 0.8
+```
+
+### Touchable opacity 
+- A wrapper for making views respond properly to touches. On press down, the opacity of the wrapped view is decreased, dimming it.
+
