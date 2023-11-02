@@ -14,11 +14,13 @@ const BlogCard = ({navigation,...props}: any) => {
     const colorScheme = useColorScheme();
     // const navigation = useNavigation(); 
     const handleNavigate = () => {
+        
         navigation.navigate('Blog',{
             params : {
                 ...props
             }
         })
+        
     }
     return (
         <View

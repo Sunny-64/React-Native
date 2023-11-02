@@ -13,9 +13,20 @@ function App(): JSX.Element {
   return (
     <NavigationContainer>
       {/* Navigation */}
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Blog" component={DetailedBlog} />
+        <Stack.Navigator 
+        >
+          <Stack.Screen 
+          name="Home" 
+          component={Home} 
+          options={{
+            headerShown : false
+          }}
+          />
+          <Stack.Screen 
+              name="Blog" 
+              component={DetailedBlog} 
+              options={{title : 'Blog'}}
+          />
         </Stack.Navigator>
       {/* Navigation */}
     </NavigationContainer>

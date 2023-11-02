@@ -7,6 +7,7 @@ import {
     SafeAreaView
 } from 'react-native'
 import React from 'react'
+import {useEffect} from 'react'
 
 // Custom imports 
 import { logo } from '../assets'
@@ -18,6 +19,9 @@ import BlogCards from '../components/BlogCards'
 import Contact from '../components/Contact'
 
 const Home = ({navigation}:any) => {
+    useEffect(() => {
+        navigation.setOptions({headerShown : false}); 
+    }, [])
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView
