@@ -2,15 +2,23 @@
 import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity, TextInput } from 'react-native'
 
+// Library imports
+
 // custom Imports 
 import { styles } from './style'
 import { logo, google, facebook, apple, back } from '../../assets'
+import { userSchema, validateEmail } from '../../utils/validation';
 
 const Signup = ({ navigation }: any) => {
+
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [toggleWrongEmailWarning, setWrongEmailWarning] = useState(false); 
+  const [togglePasswordDoNotMatch, setPasswordDoNotMatch] = useState(false); 
+
   return (
     <View style={styles.container}>
       <View style={styles.backHandlerContainer}>
@@ -46,6 +54,7 @@ const Signup = ({ navigation }: any) => {
 
         {/* form start */}
         <View style={styles.form}>
+
           <View>
             <TextInput
               value={username}
@@ -55,26 +64,40 @@ const Signup = ({ navigation }: any) => {
             />
           </View>
 
-          <TextInput
-            value={email}
-            style={[styles.input, { marginBottom: 25 }]}
-            placeholder='Email'
-            onChangeText={newEmail => setEmail(newEmail)}
-          />
+          <View>
+            {toggleWrongEmailWarning && email.trim() !== '' && <Text style={styles.warningText}>Invalid Email!</Text>}
+            <TextInput
+              value={email.trim()}
+              style={[styles.input, { marginBottom: 25 }]}
+              placeholder='Email'
+              onChangeText={newEmail => {
+                  setEmail(newEmail.trim())
+                  setWrongEmailWarning(!validateEmail(newEmail.trim()))
+              }}
+            />
+          </View>
 
-          <TextInput
-            value={password}
-            style={[styles.input, { marginBottom: 25 }]}
-            placeholder='Password'
-            onChangeText={newPasswordText => setPassword(newPasswordText)}
-          />
+          <View>
+            <TextInput
+              value={password}
+              style={[styles.input, { marginBottom: 25 }]}
+              placeholder='Password'
+              onChangeText={newPasswordText => setPassword(newPasswordText)}
+            />
+          </View>
 
-          <TextInput
-            value={confirmPassword}
-            style={[styles.input, { marginBottom: 5 }]}
-            placeholder='Confirm Password'
-            onChangeText={newConfirmPassword => setConfirmPassword(newConfirmPassword)}
-          />
+          <View>
+            {!togglePasswordDoNotMatch && confirmPassword.trim() !== '' && <Text style={styles.warningText}>Password does not match!</Text>}
+            <TextInput
+              value={confirmPassword}
+              style={[styles.input, { marginBottom: 5 }]}
+              placeholder='Confirm Password'
+              onChangeText={newConfirmPassword => {
+                  setConfirmPassword(newConfirmPassword)
+                  setPasswordDoNotMatch(password === newConfirmPassword)
+              }}
+            />
+          </View>
 
           <TouchableOpacity style={styles.forgotPasswordContainer}>
             <Text
@@ -114,7 +137,7 @@ const Signup = ({ navigation }: any) => {
           </TouchableOpacity>
 
         </View>
-        
+
         {/* Don't have an account text */}
         <View style={styles.signUpTextContainer}>
           <Text style={styles.signUpText}>Already have an account?</Text>

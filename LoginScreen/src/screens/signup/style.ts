@@ -118,5 +118,12 @@ export const styles = StyleSheet.create({
         display : 'flex', 
         flexDirection : 'row', 
         justifyContent : 'center'
+    }, 
+
+    warningText : {
+        color : 'red',
+        position : 'absolute', 
+        top : -20, 
+        marginLeft : 24
     }
 }); 

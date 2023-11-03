@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Pressable }
 import { logo } from '../../assets'
 import { styles } from './style'
 import { google, apple, facebook } from '../../assets'
+import { validateEmail } from '../../utils/validation'
 
 const Login = ({ navigation }: any) => {
 
@@ -11,15 +12,6 @@ const Login = ({ navigation }: any) => {
     const [password, setPassword] = useState('');
     const [showWrongEmailWarning, setShowWrongEmailWarning] = useState(false); 
 
-    const ValidateEmail = (email:string) => {
-        // if(nameOrEmail === '') return;
-        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-            setShowWrongEmailWarning(false)
-        }
-        else{
-            setShowWrongEmailWarning(true); 
-        }
-    }
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
@@ -53,10 +45,9 @@ const Login = ({ navigation }: any) => {
                             placeholder='Name or Email'
                             onChangeText={newText => {
                                 setNameOrEmail(newText)
-                                ValidateEmail(newText)
+                                setShowWrongEmailWarning(!validateEmail(newText))
                             }}
                         />
-
                     </View>
                     
                     <TextInput
