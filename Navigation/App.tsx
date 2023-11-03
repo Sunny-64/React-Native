@@ -1,26 +1,43 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-const Stack = createNativeStackNavigator();
-
-// Custom imports
-import Home from './src/screens/Home';
-import Login from './src/screens/Login';
 
 
-const App = () => {
+import React, { useState } from 'react';
+import {
+  SafeAreaView,
+  View,
+  TextInput,
+  StyleSheet
+} from 'react-native';
+import { Provider } from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native'
+
+import store from './src/redux/store'
+import StackNav from './src/navigation/StackNav';
+
+
+function App(): JSX.Element {
+
   return (
+    <SafeAreaView style={{ height: '100%' }}>
+      <Provider store={store}>
+        <NavigationContainer>
+              <StackNav />
+        </NavigationContainer>
+      </Provider>
 
-    <NavigationContainer>
-        <Stack.Navigator>
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Login" component={Login} />
-        </Stack.Navigator>
-    </NavigationContainer>
-  )
+    </SafeAreaView>
+  );
 }
 
-//https://www.youtube.com/watch?v=KMJE_0ybg9E
+const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 30,
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 8
+  },
 
-export default App
+
+})
+
+export default App;
