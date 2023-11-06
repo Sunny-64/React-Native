@@ -1,17 +1,33 @@
-import { View, Text } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import styles from './style'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { logo } from '../../assets'
 
-const Home = ({navigation, route}:any) => {
-  const {data} = route.params; 
-  const parseData = JSON.parse(data); 
+const Home = ({ navigation }: any) => {
+
   return (
-    <View>
-      <Text>{parseData.username}</Text>
-      <Text>{parseData.email}</Text>
-      <Text>{parseData.password}</Text>
-
-      {/* <Icon name='search'/> */}
+    <View style={styles.mainContainer}>
+      {/* Header  */}
+      <View style={styles.headerContainer}>
+        <Image
+          source={logo}
+          style={styles.logo}
+        />
+        <TouchableOpacity
+          // style={styles.iconContainer}
+          onPress={() => {
+            navigation.toggleDrawer();
+          }}
+        >
+          <Icon name='bars' style={{ color: 'white', fontSize: 30 }} />
+        </TouchableOpacity>
+      </View>
+      {/* Home page content */}
+      <View style={styles.container}>
+        <Text style={styles.heading}>Home page</Text>
+      </View>
     </View>
   )
 }

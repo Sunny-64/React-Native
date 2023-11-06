@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // custom Imports 
 import { styles } from './style'
-import { logo, google, facebook, apple, back } from '../../assets'
+import { google, facebook, apple, back } from '../../assets'
 import { userSchema, validateEmail } from '../../utils/validation';
 
 const Signup = ({ navigation }: any) => {
@@ -35,7 +35,8 @@ const Signup = ({ navigation }: any) => {
         email, 
         password,
       }
-      await AsyncStorage.setItem("user", value);  
+      const stringfiedValue = JSON.stringify(value); 
+      await AsyncStorage.setItem("user", stringfiedValue);  
 
       navigation.navigate('Login')
     }

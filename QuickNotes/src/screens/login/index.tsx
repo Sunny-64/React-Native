@@ -16,17 +16,27 @@ const Login = ({ navigation }: any) => {
     const [showWrongEmailWarning, setShowWrongEmailWarning] = useState(false);
 
     const handleSubmit = async () => {
-        const data : any = await AsyncStorage.getItem("user"); 
-        const parsedData = JSON.parse(data); 
-        if(nameOrEmail !== parsedData.email || password !== parsedData.password){
-            Alert.alert("Email or password not valid"); 
-        }
-        navigation.navigate("App", {
-            screen : "Home", 
-            params : {
-                data,
+        try {
+            const data: any = await AsyncStorage.getItem("user");
+            if (!data || data.length <= 0) {
+                Alert.alert("Email not registered");
+                return;
             }
-        }); 
+            console.log("should'nt be here")
+            const parsedData = JSON.parse(data);
+            if (password.trim().length <= 0 || nameOrEmail.trim().length <= 0) {
+                Alert.alert("Email and password are required");
+                return;
+            }
+            if (nameOrEmail !== parsedData?.email || password !== parsedData?.password) {
+                Alert.alert("Email or password is not valid");
+                return;
+            }
+            navigation.navigate("DrawerNav");
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
     return (
@@ -71,7 +81,7 @@ const Login = ({ navigation }: any) => {
                     </View>
 
                     <View>
-                    <Icon name='lock' style={styles.inputIcons}/>
+                        <Icon name='lock' style={styles.inputIcons} />
                         <TextInput
                             value={password}
                             style={[styles.input, { marginBottom: 5 }]}
