@@ -2,33 +2,19 @@ import {StyleSheet} from 'react-native'
 import { PRIMARY_COLOR, SECONDARY_COLOR } from '../globalStyles';
 
 const styles = StyleSheet.create({
-    mainContainer : {
-        backgroundColor : PRIMARY_COLOR, 
-    },
-    container : {
-        backgroundColor : SECONDARY_COLOR, 
-        height : '100%', 
-        borderRadius : 20, 
-        marginTop : 10
+    header : {
+        paddingVertical : 10, 
+        paddingHorizontal : 10,
+        display : 'flex', 
     }, 
-    heading : {
-        textAlign : 'center', 
-        marginTop : 20, 
-        fontWeight : 'bold', 
-        fontSize : 18
+    logo : {
+        height : 30,
+        width : 30
     }, 
 
-    logo : {
-        width : 100, 
-        height : 100
-    }, 
-    headerContainer : {
-        display : 'flex', 
-        flexDirection : 'row',
-        alignItems : 'center', 
-        justifyContent : 'space-between',
-        paddingHorizontal : 20
+    logoContainer : {
+        backgroundColor : '#fafafa',
     }
-})
+}); 
 
 export default styles;

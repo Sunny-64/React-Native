@@ -14,7 +14,7 @@ const CustomDrawer = (props:any) => {
             props.navigation.navigate("Login"); 
           }}
         > 
-              <Text>Logout</Text>
+          <Text>Logout</Text>
         </TouchableOpacity>
     </DrawerContentScrollView>
   )

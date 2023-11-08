@@ -1,45 +1,64 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-import {AddTask, Home} from './../../screens';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome5'
 
+
+import { PRIMARY_COLOR, SECONDARY_COLOR } from '../../screens/globalStyles';
+import { Cart, Home, Orders, Account, RestaurantProfile } from './../../screens';
 import DrawerNav from '../drawer/DrawerNav';
-import { PRIMARY_COLOR } from '../../screens/globalStyles';
+import styles from './style';
+import HomeStack from '../stack/HomeStack';
+
 const Tab = createBottomTabNavigator();
 
 const TabNav = () => {
   return (
     <Tab.Navigator
-      screenOptions={({route}) => ({
-          headerShown : false,
-          tabBarStyle : {
-              backgroundColor : PRIMARY_COLOR,
-              bottom : 10,
-              left : 20, 
-              right : 20, 
-              width : '90%', 
-              height : 70, 
-              borderRadius : 90/2, 
-              display : 'flex',
-              alignItems : 'center',
-          }, 
-          tabBarShowLabel : false,
-          tabBarIcon : ({focused, color, size}) => {
-              let iconName = ""; 
-              if(route.name === 'Home'){
-                  iconName = 'home'
-              }
-              if(route.name == 'Add Task'){
-                iconName = 'plus'
-              }
-              return <Icon name={iconName} color={'white'} size={20}/>
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: SECONDARY_COLOR,
+          height: 70,
+          paddingVertical: 10
+        },
+        tabBarShowLabel: false,
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName = "";
+          if (route.name === 'Home') {
+            iconName = 'home';
           }
+          if (route.name == 'Cart') {
+            iconName = 'shopping-cart'
+          }
+          if (route.name == 'Orders') {
+            iconName = 'clipboard-list'
+          }
+          if (route.name == 'Account') {
+            iconName = 'user-alt'
+          }
+          return (
+            <View style={[styles.tabNavContainer, focused && styles.active]}>
+              <Icon name={iconName} color={'black'} size={20} />
+              <Text>
+                {
+                  iconName === 'home' ? 'Home' :
+                    iconName === 'shopping-cart' ? 'Carts' :
+                      iconName === 'clipboard-list' ? 'Orders' :
+                        iconName === 'user-alt' && 'Account'
+                }
+              </Text>
+            </View>
+          )
+        }
       })}
     >
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Add Task" component={AddTask} />
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Cart" component={Cart} />
+      <Tab.Screen name="Orders" component={Orders} />
+      <Tab.Screen name="Account" component={Account} />
+
     </Tab.Navigator>
   )
 }

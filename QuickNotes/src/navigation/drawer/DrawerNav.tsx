@@ -1,7 +1,7 @@
 import { View, Text, } from 'react-native'
 import React, { ReactNode } from 'react'
 
-import { AddTask, Home } from '../../screens';
+import { Home } from '../../screens';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Logout from '../../components/Logout';
 import TabNav from '../tab/TabNav';

@@ -22,7 +22,6 @@ const Login = ({ navigation }: any) => {
                 Alert.alert("Email not registered");
                 return;
             }
-            console.log("should'nt be here")
             const parsedData = JSON.parse(data);
             if (password.trim().length <= 0 || nameOrEmail.trim().length <= 0) {
                 Alert.alert("Email and password are required");
@@ -32,6 +31,13 @@ const Login = ({ navigation }: any) => {
                 Alert.alert("Email or password is not valid");
                 return;
             }
+            // const userData = {
+            //     email : nameOrEmail, 
+            //     password : password
+            // }
+
+            // const stringyfiedUserData = JSON.stringify(userData); 
+            // // await AsyncStorage.setItem("user", stringyfiedUserData)
             navigation.navigate("DrawerNav");
         }
         catch (err) {
@@ -120,7 +126,11 @@ const Login = ({ navigation }: any) => {
                 {/* Separater */}
                 <View style={styles.iconsContainer}>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        // onPress={() => {
+                        //     navigation.navigate('Res')
+                        // }}
+                    >
                         <Image style={styles.icon} source={google} />
                     </TouchableOpacity>
 
