@@ -9,6 +9,8 @@ import Account from "./account";
 
 // Stack Views
 import RestaurantProfile from "./restaurantProfile";
+import Checkout from "./checkout";
+
 export {
     Login, 
     OnBoarding, 
@@ -17,5 +19,6 @@ export {
     Cart, 
     Orders, 
     Account,
-    RestaurantProfile
+    RestaurantProfile, 
+    Checkout,
 }

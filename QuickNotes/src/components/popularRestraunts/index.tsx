@@ -4,29 +4,28 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 
 import styles from './style'
-import { food2, star } from '../../assets'
+import { food2, star, mcD, kfc, acv, macDFood, coffeeShop, bagels, kfcCoverImg } from '../../assets'
 
 const CARD_DATA = [
   {
     id: 1,
-    name: "H&H Bagels",
+    name: "McDonald's",
     rating: 4.8,
     noOfRatings: 1299,
-    img: food2,
-  },
-  {
-    id: 2,
-    name: "H&H Bagels",
-    rating: 4.8,
-    noOfRatings: 1299,
-    img: food2,
+    img: mcD,
+    location : "8b sector 74, 175 floor 1",
+    profileIcon : mcD, 
+    coverImg : macDFood,
   },
   {
     id: 3,
-    name: "H&H Bagels",
+    name: "Apna Chai Vala",
     rating: 4.8,
     noOfRatings: 1299,
-    img: food2,
+    img: acv,
+    location : "8b sector 74, 175 floor 1", 
+    coverImg : coffeeShop, 
+    profileIcon : acv,
   },
   {
     id: 4,
@@ -34,11 +33,23 @@ const CARD_DATA = [
     rating: 4.8,
     noOfRatings: 1299,
     img: food2,
+    location : "8b sector 74, 175 floor 1" ,
+    coverImg : bagels, 
+    profileIcon : food2, 
   },
-
+  {
+    id: 2,
+    name: "KFC",
+    rating: 4.8,
+    noOfRatings: 1299,
+    img: kfc,
+    location : "8b sector 74, 175 floor 1", 
+    profileIcon : kfc, 
+    coverImg : kfcCoverImg
+  },
 ]
 
-const PopularRestraunts = ({ navigation }:any) => {
+const PopularRestraunts = ({navigation }:any) => {
 
   return (
     <View style={styles.container}>
@@ -57,7 +68,7 @@ const PopularRestraunts = ({ navigation }:any) => {
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("Res")
+                navigation.navigate("Res", {...item})
               }}
             >
               <Image
@@ -71,7 +82,7 @@ const PopularRestraunts = ({ navigation }:any) => {
                     {/* <Icon name='star' style={{fontSize : 15, backgroundColor : 'yellow'}}/> */}
                     <Image
                       source={star}
-                      style={{ width: 20, height: 20 }}
+                      style={{ width: 20, height: 20, objectFit : 'cover' }}
                     />
                     <Text>{item.rating}</Text>
                   </View>

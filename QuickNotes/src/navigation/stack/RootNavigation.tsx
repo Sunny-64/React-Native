@@ -10,7 +10,7 @@ import {
 } from '../../screens/index';
 import DrawerNav from '../drawer/DrawerNav';
 
-import {RestaurantProfile} from '../../screens/index';
+import {RestaurantProfile, Checkout} from '../../screens/index';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +54,7 @@ const RootNavigation = () => {
             {/* Home */}
             <Stack.Screen name='DrawerNav' component={DrawerNav} />
             <Stack.Screen name='Res' component={RestaurantProfile} />
+            <Stack.Screen name='Checkout' component={Checkout} />
             
         </Stack.Navigator>
         )

@@ -45,3 +45,31 @@ export {
     cross,
     map,
 }
+
+import mcD from './images/mcD.png'; 
+import kfc from './images/kfc.png'; 
+import acv from './images/acv.png';
+import macDFood from './images/macD-food.jpeg'; 
+import coffeeShop from './images/coffee-shop.jpg'; 
+import bagels from './images/bagels.jpg'; 
+import kfcCoverImg from './images/kfc-cover.jpg'
+
+export {
+    mcD,
+    kfc,
+    acv,
+    macDFood,
+    coffeeShop,
+    bagels, 
+    kfcCoverImg
+}
+
+import location from './images/location.png'; 
+export {
+    location,
+}
+
+import warningIcon from './icons/warning.png'; 
+export {
+    warningIcon,
+}
