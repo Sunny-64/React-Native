@@ -1,13 +1,14 @@
-import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import styles from './style'
 
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const PopularItem = ({ item, navigation }: any) => {
+const PopularItem = ({ item, navigation, updateTotalItemsCount }: any) => {
     const [toggleAddToCartView, setToggleAddToCartView] = useState(false);
     const [quantity, setQuantity] = useState(1); 
+    const [isLoading, setIsLoading] = useState(false); 
 
     const increment = () => {
         if (quantity < 1) {
@@ -28,9 +29,8 @@ const PopularItem = ({ item, navigation }: any) => {
     };
 
     const handleAddToCart = async () => {
-
+        setIsLoading(true); 
         const cartData = await AsyncStorage.getItem("cartItems");
-        // console.log(cartData);
         let cart:any = [];
         if(cartData){
             const parsedCartData = JSON.parse(cartData); 
@@ -38,10 +38,8 @@ const PopularItem = ({ item, navigation }: any) => {
             let found = false; 
             cart.forEach((cartItem:any) => {
                 if(cartItem.id === item.id){
-                    // console.log("...here")
                     cartItem.quantity += quantity;
                     found = true; 
-                    // console.log(cartItem.quantity);
                 }
             }); 
             if(!found){
@@ -59,33 +57,45 @@ const PopularItem = ({ item, navigation }: any) => {
     
             cart.push(cartItem); 
         }
+
+        // Get total Number of Items
+        let noOfItems = 0; 
+        cart?.forEach((item:any) => {
+            noOfItems += item.quantity; 
+        }); 
+
+        const serializedTotalCartItems = JSON.stringify(noOfItems); 
+        await AsyncStorage.setItem("totalCartItems", serializedTotalCartItems); 
         
-         const stringifiedCartData = JSON.stringify(cart); 
+        updateTotalItemsCount(noOfItems);
+
+        const stringifiedCartData = JSON.stringify(cart); 
         await AsyncStorage.setItem("cartItems", stringifiedCartData); 
 
-        Alert.alert("Item Added to Cart");
-        // console.log(await AsyncStorage.getItem("cartItems"));
+        Alert.alert("","Item Added to Cart");
+        setIsLoading(false); 
     }
 
     return (
-        <View style={{ width: 130, backgroundColor: 'white', marginRight: 10, marginLeft: 10, padding: 5, borderRadius:10 }}>
+        <View style={{ width: 130, backgroundColor: 'white', marginRight: 10, marginLeft: 10, padding: 5, borderRadius:10, marginVertical : 10}}>
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                 <Image
-                    source={item.img}
-                    style={{ width: 80, height: 80, borderRadius: 10 }}
+                    source={{
+                        uri : item?.image_url
+                    }}
+                    style={{ width: 80, height: 80, borderRadius: 10, objectFit : 'contain' }}
                 />
             </View>
 
             <TouchableOpacity
                 onPress={() => {
-                    // navigation.navigate("Checkout")
                     setToggleAddToCartView(!toggleAddToCartView);
                 }}
             >
-                <Text style={{ fontSize: 16, fontWeight: '700' }}>{item.title}</Text>
+                <Text style={{ fontSize: 16, fontWeight: '700' }}>{item.name}</Text>
 
                 <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text>${item.price}</Text>
+                    <Text>₹{item.target_fg}</Text>
                     <View style={{ paddingRight: 8 }}>
                         <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{!toggleAddToCartView ? "+" : "-"}</Text>
                     </View>
@@ -118,7 +128,11 @@ const PopularItem = ({ item, navigation }: any) => {
                     <TouchableOpacity style={styles.addToCartBtn}
                         onPress={handleAddToCart}
                     >
+                        {isLoading ? 
+                            <ActivityIndicator size={'small'} color={'#ffffff'}/>
+                        : 
                             <Text style={{color: '#ffffff', textAlign: 'center'}}>Add To Cart</Text>
+                        }
                     </TouchableOpacity>
                 </View>
             }

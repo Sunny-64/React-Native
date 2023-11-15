@@ -1,48 +1,51 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Pressable, Alert } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Pressable, Alert, ActivityIndicator } from 'react-native'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome'
+import { useForm, Controller } from 'react-hook-form';
+import * as yup from 'yup'
+import { yupResolver } from "@hookform/resolvers/yup"
 
 import { logo } from '../../assets'
-import { styles } from './style'
 import { google, apple, facebook } from '../../assets'
-import { validateEmail } from '../../utils/validation'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import { styles } from './style'
 
 const Login = ({ navigation }: any) => {
 
-    const [nameOrEmail, setNameOrEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showWrongEmailWarning, setShowWrongEmailWarning] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
 
-    const handleSubmit = async () => {
-        try {
-            const data: any = await AsyncStorage.getItem("user");
-            if (!data || data.length <= 0) {
-                Alert.alert("Email not registered");
-                return;
-            }
-            const parsedData = JSON.parse(data);
-            if (password.trim().length <= 0 || nameOrEmail.trim().length <= 0) {
-                Alert.alert("Email and password are required");
-                return;
-            }
-            if (nameOrEmail !== parsedData?.email || password !== parsedData?.password) {
-                Alert.alert("Email or password is not valid");
-                return;
-            }
-            // const userData = {
-            //     email : nameOrEmail, 
-            //     password : password
-            // }
+    const loginSchema = yup.object({
+        email: yup.string()
+            .required()
+            .matches(/^[\w.%+-]+@[\w.-]+\.[a-zA-Z]{2,4}$/, 'Invalid Email'),
 
-            // const stringyfiedUserData = JSON.stringify(userData); 
-            // // await AsyncStorage.setItem("user", stringyfiedUserData)
-            navigation.navigate("DrawerNav");
+        password: yup.string()
+            .required(),
+    })
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: ''
         }
-        catch (err) {
-            console.log(err)
+    });
+
+    const handleFormSubmit = async (data:any) => {
+        const storedUserData : any = await AsyncStorage.getItem("user"); 
+        const parsedData = JSON.parse(storedUserData); 
+
+        if(data.email !== parsedData.email && data.password !== parsedData.password){
+            Alert.alert('email or password is wrong'); 
+            return;
         }
+      
+        navigation.navigate("DrawerNav"); 
     }
 
     return (
@@ -54,6 +57,7 @@ const Login = ({ navigation }: any) => {
                 />
             </View>
             {/* Login form */}
+            
             <View style={styles.formContainer}>
                 <Text
                     style={{
@@ -67,36 +71,49 @@ const Login = ({ navigation }: any) => {
 
                 {/* form start */}
                 <View style={styles.form}>
-                    <View style={{ marginBottom: 27 }}>
 
-                        <Icon name='user' style={styles.inputIcons} />
-                        {showWrongEmailWarning && nameOrEmail !== '' && <Text
-                            style={{ position: 'absolute', top: -20, marginLeft: 26, color: 'red' }}
-                        >Invalid Email !!</Text>}
+                    <Controller
+                        control={control}
+                        name='email'
+                        render={({ field: { value, onChange, onBlur } }) => (
+                            <View>
+                                <Icon name='envelope' style={styles.inputIcons} />
+                                <TextInput
+                                    value={value}
+                                    style={[styles.input, { marginBottom: 25 }]}
+                                    placeholder='Email'
+                                    onChangeText={onChange}
+                                    onBlur={onBlur}
+                                />
 
-                        <TextInput
-                            value={nameOrEmail}
-                            style={[styles.input]}
-                            placeholder='Name or Email'
-                            onChangeText={newText => {
-                                setNameOrEmail(newText)
-                                // setShowWrongEmailWarning(!validateEmail(newText))
-                            }}
-                        />
+                                <View style={styles.errorMsg}>
+                                    <Text style={styles.errorText}>{errors.email?.message}</Text>
+                                </View>
+                            </View>
+                        )}
+                    />
 
-                    </View>
+                    <Controller
+                        control={control}
+                        name='password'
+                        render={({ field: { value, onChange, onBlur } }) => (
+                            <View>
+                                <Icon name='lock' style={styles.inputIcons} />
+                                <TextInput
+                                    value={value}
+                                    style={[styles.input, { marginBottom: 25 }]}
+                                    placeholder='Password'
+                                    onChangeText={onChange}
+                                    onBlur={onBlur}
+                                />
+                                <View style={styles.errorMsg}>
+                                    <Text style={styles.errorText}>{errors.password?.message}</Text>
+                                </View>
+                            </View>
+                        )}
+                    />
 
-                    <View>
-                        <Icon name='lock' style={styles.inputIcons} />
-                        <TextInput
-                            value={password}
-                            style={[styles.input, { marginBottom: 5 }]}
-                            placeholder='Password'
-                            onChangeText={newText => {
-                                setPassword(newText)
-                            }}
-                        />
-                    </View>
+
 
                     <TouchableOpacity
                         style={styles.forgotPasswordContainer}
@@ -109,9 +126,10 @@ const Login = ({ navigation }: any) => {
 
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={handleSubmit}
+                        onPress={handleSubmit(handleFormSubmit)}
                     >
-                        <Text style={styles.buttonText}>Sign In</Text>
+                        {isLoading ? <ActivityIndicator size={'small'} color={'black'} /> : <Text style={styles.buttonText}>Sign In</Text>}
+
                     </TouchableOpacity>
                 </View>
                 {/* form end */}
@@ -127,9 +145,9 @@ const Login = ({ navigation }: any) => {
                 <View style={styles.iconsContainer}>
 
                     <TouchableOpacity
-                        // onPress={() => {
-                        //     navigation.navigate('Res')
-                        // }}
+                    // onPress={() => {
+                    //     navigation.navigate('Res')
+                    // }}
                     >
                         <Image style={styles.icon} source={google} />
                     </TouchableOpacity>
@@ -145,12 +163,12 @@ const Login = ({ navigation }: any) => {
                 </View>
                 {/* Don't have an account text */}
                 <View style={styles.signUpTextContainer}>
-                    <Text style={styles.signUpText}>Don't have an account </Text>
+                    <Text style={styles.signUpText}>Don't have an account? </Text>
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate("Signup")
                         }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'black', paddingLeft: 5 }}>Sign Up</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'black', paddingLeft: 5, width : 60 }}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
             </View>

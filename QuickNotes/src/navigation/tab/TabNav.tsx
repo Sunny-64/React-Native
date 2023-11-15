@@ -55,7 +55,9 @@ const TabNav = () => {
       })}
     >
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Cart" component={Cart} />
+      <Tab.Screen name="Cart" component={Cart} options={{
+        // tabBarBadge : 0
+      }}/>
       <Tab.Screen name="Orders" component={Orders} />
       <Tab.Screen name="Account" component={Account} />
 

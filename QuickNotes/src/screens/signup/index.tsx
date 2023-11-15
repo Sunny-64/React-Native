@@ -1,43 +1,64 @@
 // Native
 import React, { useState } from 'react'
-import { View, Text, Image, TouchableOpacity, TextInput, Alert } from 'react-native'
+import { View, Text, Image, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native'
 
 // Library imports
 import Icon from 'react-native-vector-icons/FontAwesome'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useForm, Controller, Resolver } from 'react-hook-form';
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from 'yup'
 
 // custom Imports 
 import { styles } from './style'
 import { google, facebook, apple, back } from '../../assets'
-import { userSchema, validateEmail } from '../../utils/validation';
+
 
 const Signup = ({ navigation }: any) => {
 
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
 
-  const [toggleWrongEmailWarning, setWrongEmailWarning] = useState(false);
-  const [togglePasswordDoNotMatch, setPasswordDoNotMatch] = useState(false);
+  const signupSchema = yup.object({
+    email: yup.string()
+      .required()
+      .matches(/^[\w.%+-]+@[\w.-]+\.[a-zA-Z]{2,4}$/, 'Invalid Email'),
 
-  const [isChecked, setIsChecked] = useState(false); 
+    password: yup.string()
+      .required(),
 
-  const handleFormSubmit = async () => {
+    username: yup.string().required(),
+
+    confirmPassword: yup.string()
+      .required()
+      .oneOf([yup.ref('password')], 'password do not match')
+  }).required();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid, errors },
+    // watch, 
+  } = useForm({
+    resolver: yupResolver(signupSchema),
+    defaultValues: {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    }
+  })
+
+  const handleFormSubmit = async (data: any) => {
+    if(!isValid){
+        Alert.alert("Please complete the form");
+    }
     if(!isChecked){
       Alert.alert("Please Accept the terms and conditions"); 
       return;
     }
     try {
-      const validate = await userSchema.validate({ username, email, password });
-      const value : any = {
-        username,
-        email, 
-        password,
-      }
-      const stringfiedValue = JSON.stringify(value); 
-      await AsyncStorage.setItem("user", stringfiedValue);  
-
+      const stringifiedData = JSON.stringify(data); 
+      await AsyncStorage.setItem("user", stringifiedData);  
       navigation.navigate('Login')
     }
     catch (err:unknown | any) {
@@ -47,7 +68,7 @@ const Signup = ({ navigation }: any) => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.backHandlerContainer}>
 
         <TouchableOpacity
@@ -81,65 +102,97 @@ const Signup = ({ navigation }: any) => {
 
         {/* form start */}
         <View style={styles.form}>
+          <Controller
+            control={control}
+            name='username'
+            render={({ field: { value, onChange, onBlur } }) => (
+              <View>
+                <Icon name='user' style={styles.inputIcons} />
+                <TextInput
+                  value={value}
+                  style={[styles.input, { marginBottom: 25 }]}
+                  placeholder='Username'
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+                <View style={styles.errorMsg}>
+                  <Text style={styles.errorText}>{errors.username?.message}</Text>
+                </View>
+              </View>
+            )}
+          />
 
-          <View>
-            <Icon name='user' style={styles.inputIcons} />
-            <TextInput
-              value={username}
-              style={[styles.input, { marginBottom: 25 }]}
-              placeholder='Username'
-              onChangeText={newUserName => setUsername(newUserName)}
-            />
-          </View>
+          <Controller
+            control={control}
+            name='email'
+            render={({ field: { value, onChange, onBlur } }) => (
+              <View>
+                <Icon name='envelope' style={styles.inputIcons} />
+                <TextInput
+                  value={value}
+                  style={[styles.input, { marginBottom: 25 }]}
+                  placeholder='Email'
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
 
-          <View>
-            <Icon name='envelope' style={styles.inputIcons} />
-            {toggleWrongEmailWarning && email.trim() !== '' && <Text style={styles.warningText}>Invalid Email!</Text>}
-            <TextInput
-              value={email.trim()}
-              style={[styles.input, { marginBottom: 25 }]}
-              placeholder='Email'
-              onChangeText={newEmail => {
-                setEmail(newEmail.trim())
-                setWrongEmailWarning(!validateEmail(newEmail.trim()))
-              }}
-            />
-          </View>
+                <View style={styles.errorMsg}>
+                  <Text style={styles.errorText}>{errors.email?.message}</Text>
+                </View>
+              </View>
+            )}
+          />
 
-          <View>
-            <Icon name='lock' style={styles.inputIcons} />
-            <TextInput
-              value={password}
-              style={[styles.input, { marginBottom: 25 }]}
-              placeholder='Password'
-              onChangeText={newPasswordText => setPassword(newPasswordText)}
-            />
-          </View>
+          <Controller
+            control={control}
+            name='password'
+            render={({ field: { value, onChange, onBlur } }) => (
+              <View>
+                <Icon name='lock' style={styles.inputIcons} />
+                <TextInput
+                  value={value}
+                  style={[styles.input, { marginBottom: 25 }]}
+                  placeholder='Password'
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+                <View style={styles.errorMsg}>
+                  <Text style={styles.errorText}>{errors.password?.message}</Text>
+                </View>
+              </View>
+            )}
+          />
 
-          <View>
-            <Icon name='lock' style={styles.inputIcons} />
-            {!togglePasswordDoNotMatch && confirmPassword.trim() !== '' && <Text style={styles.warningText}>Password does not match!</Text>}
-            <TextInput
-              value={confirmPassword}
-              style={[styles.input, { marginBottom: 5 }]}
-              placeholder='Confirm Password'
-              onChangeText={newConfirmPassword => {
-                setConfirmPassword(newConfirmPassword)
-                setPasswordDoNotMatch(password === newConfirmPassword)
-              }}
-            />
-          </View>
+          <Controller
+            control={control}
+            name='confirmPassword'
+            render={({ field: { value, onChange, onBlur } }) => (
+              <View>
+                <Icon name='lock' style={styles.inputIcons} />
+                {/* {!togglePasswordDoNotMatch && confirmPassword.trim() !== '' && <Text style={styles.warningText}>Password does not match!</Text>} */}
+                <TextInput
+                  value={value}
+                  style={[styles.input, { marginBottom: 5 }]}
+                  placeholder='Confirm Password'
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+                <View style={styles.lastInputErr}>
+                  <Text style={styles.errorText}>{errors.confirmPassword?.message}</Text>
+                </View>
+              </View>
+            )}
+          />
 
           <View style={styles.termsAndConditions}>
-            <TouchableOpacity 
-              style={styles.termsAndConditionsContainer} 
+            <TouchableOpacity
+              style={styles.termsAndConditionsContainer}
               onPress={() => {
                 setIsChecked(!isChecked)
               }}
             >
-             
-              {/* <Icon name="square-o" style={styles.checkBox}/> */}
-              <Icon name={isChecked ? "check-square" : "square-o"} style={styles.checkBox}/>
+
+              <Icon name={isChecked ? "check-square" : "square-o"} style={styles.checkBox} />
               <Text
                 style={styles.termsAndConditionsText}
               >I agree to all the Terms & Conditions</Text>
@@ -148,7 +201,7 @@ const Signup = ({ navigation }: any) => {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={handleFormSubmit}
+            onPress={handleSubmit(handleFormSubmit)}
           >
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
@@ -162,6 +215,7 @@ const Signup = ({ navigation }: any) => {
           <Text style={{ fontSize: 15, fontWeight: '500' }}>Or</Text>
           <View style={styles.halfSeparator}></View>
         </View>
+
         {/* Separater */}
         <View style={styles.iconsContainer}>
 
@@ -187,12 +241,12 @@ const Signup = ({ navigation }: any) => {
               navigation.navigate("Login")
             }}
           >
-            <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'black', paddingLeft: 5 }}>Login</Text>
+            <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
         </View>
       </View>
       {/* Login form End */}
-    </View>
+    </ScrollView>
   )
 }
 

@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 import {Dimensions} from 'react-native'
 
 const screenWidth = Dimensions.get("screen").width; 
+const screenHeight = Dimensions.get("screen").height; 
 
 const styles = StyleSheet.create({
     container : {
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
 
     cardItemContainer : {
         backgroundColor : '#e4e5e7',
-        marginVertical : 8,
+        marginVertical : 10,
         paddingVertical : 8, 
         borderRadius : 8,
         paddingHorizontal : 10,
@@ -58,6 +59,17 @@ const styles = StyleSheet.create({
         flexDirection : 'row', 
         justifyContent : 'space-between',
         paddingHorizontal : 20, 
+
+    },
+    header : {
+        width : '100%',
+        display : 'flex', 
+        flexDirection : 'row',
+        alignItems : 'center', 
+        marginBottom : 10
+    }, 
+    backIcon : {
+        width : '16%', 
 
     }
 }); 
