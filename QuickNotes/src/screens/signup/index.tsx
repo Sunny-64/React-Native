@@ -8,15 +8,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller, Resolver } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from 'yup'
+import { useDispatch, useSelector } from 'react-redux';
 
 // custom Imports 
 import { styles } from './style'
 import { google, facebook, apple, back } from '../../assets'
+import { setUser } from '../../redux/user/userSlice';
 
 
 const Signup = ({ navigation }: any) => {
 
   const [isChecked, setIsChecked] = useState(false);
+  // stored in redux..
+
+  const dispatch = useDispatch();
+  const userData = useSelector((state: any) => state.user);
 
   const signupSchema = yup.object({
     email: yup.string()
@@ -37,7 +43,6 @@ const Signup = ({ navigation }: any) => {
     control,
     handleSubmit,
     formState: { isValid, errors },
-    // watch, 
   } = useForm({
     resolver: yupResolver(signupSchema),
     defaultValues: {
@@ -49,21 +54,29 @@ const Signup = ({ navigation }: any) => {
   })
 
   const handleFormSubmit = async (data: any) => {
-    if(!isValid){
-        Alert.alert("Please complete the form");
+
+    if (!isValid) {
+      Alert.alert("Please complete the form");
     }
-    if(!isChecked){
-      Alert.alert("Please Accept the terms and conditions"); 
+    if (!isChecked) {
+      Alert.alert("Please Accept the terms and conditions");
       return;
     }
     try {
-      const stringifiedData = JSON.stringify(data); 
-      await AsyncStorage.setItem("user", stringifiedData);  
+      // delete data.confrimPassword;
+      // console.log('====================================');
+      // console.log("log after delete : ", data);
+      // console.log('====================================');
+
+      dispatch(setUser(data)); 
+      // console.log('dispatched'); 
+      const stringifiedData = JSON.stringify(data);
+      await AsyncStorage.setItem("user", stringifiedData);
       navigation.navigate('Login')
     }
-    catch (err:unknown | any) {
-      const errorMessage:string = err?.message; 
-      Alert.alert(errorMessage); 
+    catch (err: unknown | any) {
+      const errorMessage: string = err?.message;
+      Alert.alert(errorMessage);
     }
   }
 

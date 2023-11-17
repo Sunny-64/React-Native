@@ -8,7 +8,6 @@ import { ScrollView } from 'react-native-virtualized-view'
 
 const Home = ({ navigation }: any) => {
   
-
   return (
     <ScrollView style={{ backgroundColor: '#ffffff' }}>
       <Header />

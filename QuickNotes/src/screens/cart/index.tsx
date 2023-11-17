@@ -2,10 +2,11 @@ import { View, Text, ScrollView, FlatList, Image, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import styles from './styles'
 
-
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
+import {useSelector, useDispatch} from 'react-redux'; 
+import { removeItemFromCart } from '../../redux/cart/cartSlice'
 
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
@@ -14,58 +15,40 @@ const Cart = ({ navigation }: any) => {
   const [total, setTotal] = useState(0);
   const [noOfItemsInCart, setNoOfItemsInCart] = useState(0); 
 
+  const dispatch = useDispatch(); 
+
+  const cartItems = useSelector((state:any) => state.cart.data); 
+
   const calculateTotal = () => {
-    if (!cartData) {
-      return;
-    }
-    let res: any = 0;
-    cartData?.forEach((item: any) => {
-      res += item?.target_fg * item?.quantity;
-    });
-    const t = Number(parseFloat(res).toFixed(2));
-    setTotal(t);
+      let t = 0; 
+      cartItems.forEach((item:any) => {
+        t += item.target_fg * item.quantity; 
+      });
+      setTotal(t);
   }
 
-  useEffect(() => {
-    const getCartData = async () => {
-      const localCartData: any = await AsyncStorage.getItem("cartItems");
-      if (!localCartData) {
-        return;
-      }
-      const parsedLocalData = JSON.parse(localCartData);
-      setCartData(parsedLocalData);
-    }
-    getCartData();
-
-    let totalItems:any = 0; 
-    cartData.forEach((item:any) => {
-        totalItems += item.quantity
+  const calculateTotalItemsInCart = () => {
+    let t = 0; 
+    cartItems.forEach((item:any) => {
+        t += item.quantity; 
     }); 
-
-    if (cartData) {
-      calculateTotal();
-      setNoOfItemsInCart(totalItems)
+    setNoOfItemsInCart(t)
+  }
+  useEffect(() => {
+    if(cartItems){
+      calculateTotalItemsInCart(); 
+      calculateTotal(); 
       navigation.setOptions({
-        tabBarBadge: totalItems
+        tabBarBadge: noOfItemsInCart
       })
     }
-  }, [cartData, navigation]);
+  }, [cartItems, noOfItemsInCart]); 
 
   const handleRemoveFromCart = async (id: number) => {
-    try {
-      const getCartData: any = await AsyncStorage.getItem("cartItems");
-      if (!getCartData) {
-        return;
+      const payload:any = {
+          id,
       }
-      const parsedGetCartData = JSON.parse(getCartData);
-      const updatedCartData = parsedGetCartData.filter((item: any, index: number) => item.id !== id);
-
-      const stringifiedUpdatedCartData = JSON.stringify(updatedCartData);
-      await AsyncStorage.setItem("cartItems", stringifiedUpdatedCartData);
-    }
-    catch (err) {
-      console.log(err);
-    }
+      dispatch(removeItemFromCart(payload))
   }
   return (
     <>
@@ -99,8 +82,8 @@ const Cart = ({ navigation }: any) => {
             <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>No Items in the Cart!!!</Text>
           </View>
         }
-        {cartData.length > 0 &&
-          cartData.map((item: any, index) => {
+        {
+          cartItems.map((item: any, index:number) => {
             return (
               <View key={index} style={styles.cardItemContainer}>
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>

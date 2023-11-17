@@ -3,11 +3,15 @@ import React from 'react'
 
 import RazorpayCheckout from 'react-native-razorpay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useSelector, useDispatch } from 'react-redux';
 import { logo } from '../../assets';
+import { emptyCart } from '../../redux/cart/cartSlice';
 // import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const Payment = ({ amount, style, buttonTextStyle, navigation }: any) => {
+    
+    const cd = useSelector((state:any) => state.cart.data); 
+    const dispatch = useDispatch(); 
 
     const saveOrdersInAsynStorage = async (data: any) => {
         try {
@@ -15,30 +19,36 @@ const Payment = ({ amount, style, buttonTextStyle, navigation }: any) => {
             const getOrders: any = await AsyncStorage.getItem("orders");
             const getCartData = await AsyncStorage.getItem("cartItems");
 
+            dispatch(emptyCart()); 
+            // console.log('====================================');
+            // console.log("cart should be empty by this");
+            // console.log('====================================');
+
             // if cart is empty than order can't be placed...
-            if (!getCartData) {
-                return;
-            }
+            // if (!getCartData) {
+            //     return;
+            // }
 
             // parse cart item to json 
-            const cartItems = JSON.parse(getCartData);
+            // const cartItems = JSON.parse(getCartData);
             let total = 0;
 
             // calculate total 
-            cartItems.forEach((item:any) => {
+            cd.forEach((item:any) => {
                 total += item.target_fg * item.quantity
             }); 
 
             // create the order object
             const dataWithPaymentId = {
-                cartItems : [...cartItems],
+                cartItems : [...cd],
                 paymentId: data.razorpay_payment_id, 
                 total : total,
             }
 
             // orders initialization
             let orders = [];
-            
+            // console.log(orders)
+
             // if orders doesn't exist in async storage
             if (!getOrders) {
                 orders.push(dataWithPaymentId);
@@ -50,6 +60,7 @@ const Payment = ({ amount, style, buttonTextStyle, navigation }: any) => {
             }
 
             // stringify the orders data again..
+           
             const stringifiedOrdersData = JSON.stringify(orders);
             await AsyncStorage.setItem("orders", stringifiedOrdersData);
 
@@ -88,6 +99,7 @@ const Payment = ({ amount, style, buttonTextStyle, navigation }: any) => {
                 // handle success
                 Alert.alert(`Success: ${data.razorpay_payment_id}`);
                 saveOrdersInAsynStorage(data); 
+                navigation.navigate('Home'); 
             })
             .catch(error => {
                 Alert.alert(`Error: ${error.code} | ${error.description}`);

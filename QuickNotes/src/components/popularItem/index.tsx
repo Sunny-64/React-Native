@@ -3,12 +3,16 @@ import React, { useState, useEffect } from 'react'
 import styles from './style'
 
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import {useSelector, useDispatch} from 'react-redux'; 
+
+import { addItemToCart } from '../../redux/cart/cartSlice'
 
 const PopularItem = ({ item, navigation, updateTotalItemsCount }: any) => {
     const [toggleAddToCartView, setToggleAddToCartView] = useState(false);
     const [quantity, setQuantity] = useState(1); 
     const [isLoading, setIsLoading] = useState(false); 
+
+    const dispatch = useDispatch(); 
 
     const increment = () => {
         if (quantity < 1) {
@@ -16,63 +20,25 @@ const PopularItem = ({ item, navigation, updateTotalItemsCount }: any) => {
         } else {
             setQuantity((prev) => prev + 1);
         }
-        setToggleAddToCartView(true); // Toggle the view on increment
+        setToggleAddToCartView(true); 
     }; 
 
     const decrement = () => {
         if (quantity > 1) {
             setQuantity((prev) => prev - 1);
         } else {
-            setToggleAddToCartView(false); // Toggle the view on decrement when quantity reaches 1
+            setToggleAddToCartView(false); 
             setQuantity(1);
         }
     };
 
     const handleAddToCart = async () => {
         setIsLoading(true); 
-        const cartData = await AsyncStorage.getItem("cartItems");
-        let cart:any = [];
-        if(cartData){
-            const parsedCartData = JSON.parse(cartData); 
-            cart = [...parsedCartData]; 
-            let found = false; 
-            cart.forEach((cartItem:any) => {
-                if(cartItem.id === item.id){
-                    cartItem.quantity += quantity;
-                    found = true; 
-                }
-            }); 
-            if(!found){
-                cart.push({
-                    ...item, 
-                    quantity
-                })
-            }
+        const payload = {
+            ...item, 
+            quantity, 
         }
-        else{
-            const cartItem = {
-                ...item, 
-                quantity,
-            }
-    
-            cart.push(cartItem); 
-        }
-
-        // Get total Number of Items
-        let noOfItems = 0; 
-        cart?.forEach((item:any) => {
-            noOfItems += item.quantity; 
-        }); 
-
-        const serializedTotalCartItems = JSON.stringify(noOfItems); 
-        await AsyncStorage.setItem("totalCartItems", serializedTotalCartItems); 
-        
-        updateTotalItemsCount(noOfItems);
-
-        const stringifiedCartData = JSON.stringify(cart); 
-        await AsyncStorage.setItem("cartItems", stringifiedCartData); 
-
-        Alert.alert("","Item Added to Cart");
+        dispatch(addItemToCart(payload));
         setIsLoading(false); 
     }
 
